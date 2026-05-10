@@ -27,7 +27,7 @@ A personal Python CLI tool to transcribe, analyze, and track your daily English-
 
 1. Clone the repository:
 ```bash
-git clone <repo-url>
+git clone https://github.com/Nbks/english-coach.git
 cd english-coach
 ```
 

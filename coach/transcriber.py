@@ -4,10 +4,10 @@ from pathlib import Path
 
 from openai import OpenAI
 
-client = OpenAI()
 
 
 def extract_audio(video_path: Path) -> Path:
+    client = OpenAI()
     """Extrae el audio del video a un .mp3 temporal usando ffmpeg."""
     tmp = tempfile.NamedTemporaryFile(suffix=".mp3", delete=False)
     tmp.close()
@@ -39,6 +39,7 @@ def transcribe(video_path: Path) -> str:
     Recibe el path del video, extrae el audio y devuelve
     la transcripción cruda como string.
     """
+    client = OpenAI()
     video_path = Path(video_path)
     if not video_path.exists():
         raise FileNotFoundError(f"No se encontró el video: {video_path}")

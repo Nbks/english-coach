@@ -1,0 +1,17 @@
+[project]
+name = "english-coach"
+version = "0.1.0"
+description = "Your project description"
+authors = [
+    { name="Lucas", email="your@email.com" }
+]
+requires-python = ">=3.11"
+
+dependencies = [
+    "openai",
+    "anthropic",
+    "typer",
+    "rich",
+    "ffmpeg-python",
+    "python-dotenv",
+]

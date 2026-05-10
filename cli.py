@@ -1,5 +1,6 @@
 from datetime import date
 from pathlib import Path
+from dotenv import load_dotenv
 
 import typer
 from rich.console import Console
@@ -10,6 +11,7 @@ from rich import box
 from coach import transcriber, analyzer
 from coach.context import update_scorecard, get_scorecard, scorecard_summary
 from coach import storage
+
 
 app = typer.Typer(help="English Coach — daily speaking practice analyzer")
 console = Console()
@@ -23,7 +25,7 @@ def run(
     date_override: str = typer.Option(None, "--date", help="Fecha manual YYYY-MM-DD"),
 ):
     """Procesa el video del día: transcribe, analiza y guarda el reporte."""
-
+    load_dotenv()
     session_date = date.fromisoformat(date_override) if date_override else date.today()
 
     console.print(f"\n[bold]English Coach[/bold] — sesión {session_date.isoformat()}\n")

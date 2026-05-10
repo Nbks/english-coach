@@ -4,8 +4,8 @@ import anthropic
 
 from .context import build_context, scorecard_summary
 
-client = anthropic.Anthropic()
-MODEL = "claude-opus-4-5"
+
+MODEL = "claude-haiku-4-5"
 
 BASE_PROMPT = """You are an English speaking coach. Your student records a daily 15-minute video speaking in English and you analyze the transcription.
 
@@ -72,6 +72,7 @@ def _build_prompt(transcription: str, context: dict) -> str:
     sc = context["scorecard"]
     recent = context["recent_sessions"]
     mode = context["mode"]
+    client = anthropic.Anthropic()
 
     parts = [BASE_PROMPT]
 
@@ -111,12 +112,13 @@ def analyze(transcription: str) -> dict:
     Recibe la transcripción y devuelve el reporte como dict.
     """
     print("  → Analizando con Claude...")
+    client = anthropic.Anthropic()
     context = build_context()
     prompt = _build_prompt(transcription, context)
 
     message = client.messages.create(
         model=MODEL,
-        max_tokens=2048,
+        max_tokens=4096,
         messages=[{"role": "user", "content": prompt}],
     )
 
