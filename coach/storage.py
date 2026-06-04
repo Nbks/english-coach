@@ -22,11 +22,19 @@ def save_session(data: dict, session_date: date = None) -> Path:
     return path
 
 
+def session_exists(session_date: date) -> bool:
+    return (SESSIONS_DIR / f"{session_date.isoformat()}.json").exists()
+
+
+def previous_session_date(session_date: date) -> date | None:
+    sessions = [d for d in list_sessions() if d < session_date]
+    return sessions[-1] if sessions else None
+
+
 def load_session(session_date: date) -> dict | None:
-    path = SESSIONS_DIR / f"{session_date.isoformat()}.json"
-    if not path.exists():
+    if not session_exists(session_date):
         return None
-    with open(path, encoding="utf-8") as f:
+    with open(SESSIONS_DIR / f"{session_date.isoformat()}.json", encoding="utf-8") as f:
         return json.load(f)
 
 

@@ -48,7 +48,7 @@ def run(
     storage.save_session(session_data, session_date)
 
     # 4. Actualizar scorecard
-    update_scorecard(report)
+    update_scorecard(report, session_date)
 
     # 5. Mostrar reporte
     _print_report(report, session_date)

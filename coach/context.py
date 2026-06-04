@@ -27,7 +27,7 @@ def get_scorecard() -> dict:
     return sc
 
 
-def update_scorecard(report: dict) -> dict:
+def update_scorecard(report: dict, session_date: date) -> dict:
     """
     Recibe el reporte del analyzer y actualiza el scorecard rolling.
     report debe tener:
@@ -39,25 +39,35 @@ def update_scorecard(report: dict) -> dict:
         }
     """
     sc = get_scorecard()
-    sc["total_sessions"] += 1
+
+    if not storage.session_exists(session_date):
+        sc["total_sessions"] += 1
+
     metrics = sc["metrics"]
 
+    prev_date = storage.previous_session_date(session_date)
+    prev_data = storage.load_session(prev_date) if prev_date else None
+
     def update_metric(key, new_value):
-        old = metrics[key]["score"]
         metrics[key]["score"] = new_value
-        metrics[key]["trend"] = (new_value - old) if old is not None else 0
+        if prev_data:
+            old = prev_data.get(f"{key}_score")
+            metrics[key]["trend"] = (new_value - old) if old is not None else 0
+        else:
+            metrics[key]["trend"] = 0
 
     update_metric("grammar", report.get("grammar_score", 0))
     update_metric("coherence", report.get("coherence_score", 0))
     update_metric("vocabulary", report.get("vocabulary_score", 0))
 
     sc["metrics"]["serious_errors"]["count"] = report.get("serious_errors_count", 0)
-    prev = sc["metrics"]["serious_errors"].get("prev_count")
-    if prev is not None:
+    if prev_data:
+        prev_errors = prev_data.get("serious_errors_count")
         sc["metrics"]["serious_errors"]["trend"] = (
-            report.get("serious_errors_count", 0) - prev
-        )
-    sc["metrics"]["serious_errors"]["prev_count"] = report.get("serious_errors_count", 0)
+            report.get("serious_errors_count", 0) - prev_errors
+        ) if prev_errors is not None else 0
+    else:
+        sc["metrics"]["serious_errors"]["trend"] = 0
 
     storage.save_scorecard(sc)
     return sc
