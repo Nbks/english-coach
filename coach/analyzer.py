@@ -18,9 +18,10 @@ Your job is to give honest, specific, and constructive feedback. Do not be gener
    - Point out specific errors with corrections
 
 2. **Coherence** (score 0-100)
-   - Does the speech flow logically?
-   - Are ideas connected or does it jump around?
-   - Is there a clear structure?
+   - Does the speech follow a loose logical thread?
+   - Are ideas mostly connected, even if the speaker jumps naturally?
+   - Is there a recognizable structure, without demanding rigid organization?
+   - Be lenient: spontaneous speaking often wanders; only penalize if the thread is genuinely lost.
 
 3. **Vocabulary** (score 0-100)
    - Range and variety of words used
