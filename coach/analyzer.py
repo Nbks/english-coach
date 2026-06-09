@@ -72,7 +72,6 @@ def _build_prompt(transcription: str, context: dict) -> str:
     sc = context["scorecard"]
     recent = context["recent_sessions"]
     mode = context["mode"]
-    client = anthropic.Anthropic()
 
     parts = [BASE_PROMPT]
 
@@ -107,6 +106,22 @@ def _build_prompt(transcription: str, context: dict) -> str:
     return "\n".join(parts)
 
 
+def _clean_json_response(raw: str) -> str:
+    cleaned = raw.strip()
+    if cleaned.startswith("```"):
+        cleaned = cleaned.split("```")[1]
+        if cleaned.startswith("json"):
+            cleaned = cleaned[4:]
+    return cleaned.strip()
+
+
+def _parse_report(cleaned: str) -> dict:
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Claude no devolvió JSON válido:\n{cleaned}\n\nError: {e}")
+
+
 def analyze(transcription: str) -> dict:
     """
     Recibe la transcripción y devuelve el reporte como dict.
@@ -123,14 +138,5 @@ def analyze(transcription: str) -> dict:
     )
 
     raw = message.content[0].text.strip()
-
-    # Limpiamos por si el modelo pone backticks de todas formas
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-
-    try:
-        return json.loads(raw)
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Claude no devolvió JSON válido:\n{raw}\n\nError: {e}")
+    cleaned = _clean_json_response(raw)
+    return _parse_report(cleaned)
